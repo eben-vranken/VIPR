@@ -1,16 +1,17 @@
 extends CharacterBody3D
 
 # Player Variables
-@export var move_speed: float = 100.0
-@export var acceleration: float = 15.0
+@export var acceleration: float = 100.0
 @export var friction: float = 0.5
 @export var gravity: float = -9.86
-@export var brake_speed: float = 5.0
+@export var brake_speed: float = 12.5
 @export var mass: float = 20.0
+@export var tilt_amount: float = 0.3
+@export var tilt_speed: float = 5.0
 
 # Turning
-@export var turn_amount: float = 30.0
-@export var turn_speed: float = 2.5
+@export var turn_amount: float = 50.0
+@export var turn_speed: float = 1.0
 @export var turn_stop_limit: float = 25.0 # Speed needed to turn
 
 # Inputs
@@ -22,7 +23,7 @@ var brake: float = 0.0
 @onready var car_collision: CollisionShape3D = $CarCollision
 @onready var car_mesh: MeshInstance3D = $CarMesh
 @onready var ground_check_raycast: RayCast3D = $GroundCheck
-@onready var player_camera: Camera3D = $Camera3D
+@onready var player_camera: Camera3D = $CarMesh/Camera3D
 
 func _physics_process(delta):
 	player_inputs()
@@ -38,44 +39,54 @@ func player_inputs():
 func player_movement(delta):
 	# Apply gravity
 	if not ground_check_raycast.is_colliding():
-		velocity.y += gravity
+		velocity.y += gravity * delta
+
+	# Get the forward direction of the car
+	var forward = -global_transform.basis.z
 
 	# Forward or backward movement
 	if thrust:
-		var desired_speed = thrust * acceleration / mass
-		velocity += desired_speed * -global_transform.basis.z
-
+		var desired_speed = thrust * acceleration * delta
+		velocity += forward * desired_speed
 
 	# Apply friction
-	if not thrust:
-		var friction_force = velocity * friction * delta
-		if friction_force.length() > velocity.length():
-			velocity = Vector3.ZERO
-		else:
-			velocity -= friction_force
+	var friction_force = velocity * friction * delta
+	if friction_force.length() > velocity.length():
+		velocity = Vector3.ZERO
+	else:
+		velocity -= friction_force
 
 	# Apply brake
 	if brake:
-		var brake_force = brake * brake_speed / mass
+		var brake_force = brake * brake_speed * delta
 		if brake_force > velocity.length():
 			velocity = Vector3.ZERO
 		else:
-			velocity -= brake_force * velocity.normalized()
+			velocity -= velocity.normalized() * brake_force
 
 	# Steering
 	var turn_amount_rad = turn_input * deg_to_rad(turn_amount)
-	var turn_delta = turn_amount_rad * min(1.0, abs(velocity.z) / turn_stop_limit) * delta
-	global_transform.basis = global_transform.basis.rotated(Vector3.UP, -turn_delta * turn_speed)
+	var speed = velocity.length()
+	var turn_delta = turn_amount_rad * min(1.0, speed / turn_stop_limit) * delta
 
-	# Leaning
-	rotation.z = lerp(rotation.z, turn_input / 3, 0.5)
+	# Rotate the car
+	rotate_y(-turn_delta * turn_speed)
 
-	print("Car speed: ", abs(velocity.z))
+	# Align velocity with the new forward direction
+	var forward_velocity = forward * velocity.dot(forward)
+	var side_velocity = velocity - forward_velocity
+	side_velocity = side_velocity.lerp(Vector3.ZERO, friction * delta)
+	velocity = forward_velocity + side_velocity
+
+	# Tilt when steering
+	var tilt = -turn_input * tilt_amount
+	car_mesh.rotation.z = lerp(car_mesh.rotation.z, tilt, tilt_speed * delta)
+
+	print("Car speed: ", speed)
 	move_and_slide()
 
 func update_camera():
-	player_camera.global_transform.origin = car_mesh.global_transform.origin + Vector3(0, 5, 10)
-	player_camera.look_at(car_mesh.global_transform.origin, Vector3.UP)
+	player_camera.rotation = Vector3.ZERO
 
 func player_haptic():
 	# Vibrate

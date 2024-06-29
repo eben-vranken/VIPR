@@ -16,11 +16,12 @@ sky = SubResource("Sky_rwl50")
 tonemap_mode = 2
 glow_enabled = true
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s0q6v"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_y8to4"]
 albedo_texture = ExtResource("2_cymrb")
-uv1_scale = Vector3(1, 10, 1)
+uv1_scale = Vector3(1, 50, 1)
 
-[sub_resource type="PlaneMesh" id="PlaneMesh_woe61"]
+[sub_resource type="PlaneMesh" id="PlaneMesh_mqtni"]
+material = SubResource("StandardMaterial3D_y8to4")
 size = Vector2(30, 1000)
 
 [node name="Track" type="Node3D"]
@@ -33,10 +34,8 @@ transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75
 shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource("1_04lw3")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
-[node name="CSGMesh3D" type="CSGMesh3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -465)
-material_override = SubResource("StandardMaterial3D_s0q6v")
+[node name="Track" type="CSGMesh3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -477)
 use_collision = true
-mesh = SubResource("PlaneMesh_woe61")
+mesh = SubResource("PlaneMesh_mqtni")
