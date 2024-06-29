@@ -1,0 +1,42 @@
+[gd_scene load_steps=8 format=3 uid="uid://m2lx32lfwyvw"]
+
+[ext_resource type="PackedScene" uid="uid://eolxnjs2tckx" path="res://Objects/Player/player.tscn" id="1_04lw3"]
+[ext_resource type="Texture2D" uid="uid://csgv0dckyxw6y" path="res://Visuals/Sprites/Track/road-texture.jpg" id="2_cymrb"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hmsfw"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_rwl50"]
+sky_material = SubResource("ProceduralSkyMaterial_hmsfw")
+
+[sub_resource type="Environment" id="Environment_bxcl1"]
+background_mode = 2
+sky = SubResource("Sky_rwl50")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_s0q6v"]
+albedo_texture = ExtResource("2_cymrb")
+uv1_scale = Vector3(1, 10, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_woe61"]
+size = Vector2(30, 1000)
+
+[node name="Track" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bxcl1")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Player" parent="." instance=ExtResource("1_04lw3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -465)
+material_override = SubResource("StandardMaterial3D_s0q6v")
+use_collision = true
+mesh = SubResource("PlaneMesh_woe61")

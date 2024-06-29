@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://eolxnjs2tckx"]
+
+[ext_resource type="Script" path="res://Scripts/Player/player_movement.gd" id="1_vh1fj"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_v3wyw"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_yt4ie"]
+size = Vector3(1, 1, 2)
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_vh1fj")
+
+[node name="CarCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+shape = SubResource("BoxShape3D_v3wyw")
+
+[node name="CarMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_yt4ie")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+fov = 90.0
+
+[node name="GroundCheck" type="RayCast3D" parent="."]

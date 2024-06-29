@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://eolxnjs2tckx"]
+
+[ext_resource type="Script" path="res://Scripts/Player/player_movement.gd" id="1_vh1fj"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_80f3l"]
+friction = 0.2
+bounce = 0.1
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_djl4g"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_ej8i1"]
+size = Vector3(1, 1, 2)
+
+[node name="Player" type="RigidBody3D"]
+physics_material_override = SubResource("PhysicsMaterial_80f3l")
+gravity_scale = 5.0
+lock_rotation = true
+angular_damp_mode = 1
+angular_damp = 1.0
+script = ExtResource("1_vh1fj")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_djl4g")
+
+[node name="CarMesh" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("BoxMesh_ej8i1")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+fov = 90.0
+
+[node name="GroundCheck" type="RayCast3D" parent="."]
