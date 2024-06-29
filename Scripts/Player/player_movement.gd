@@ -62,13 +62,15 @@ func player_movement(delta):
 		else:
 			velocity -= brake_force * velocity.normalized()
 
-	# Apply turning
+	# Steering
 	var turn_amount_rad = turn_input * deg_to_rad(turn_amount)
 	var turn_delta = turn_amount_rad * min(1.0, abs(velocity.z) / turn_stop_limit) * delta
 	global_transform.basis = global_transform.basis.rotated(Vector3.UP, -turn_delta * turn_speed)
 
-	print(abs(velocity.z))
+	# Leaning
+	rotation.z = lerp(rotation.z, turn_input / 3, 0.5)
 
+	print("Car speed: ", abs(velocity.z))
 	move_and_slide()
 
 func update_camera():
