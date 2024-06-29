@@ -22,3 +22,7 @@ mesh = SubResource("BoxMesh_yt4ie")
 transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 3.9, 9.2)
 
 [node name="GroundCheck" type="RayCast3D" parent="."]
+
+[node name="DodgeTimer" type="Timer" parent="."]
+
+[connection signal="timeout" from="DodgeTimer" to="." method="_on_dodge_timer_timeout"]
