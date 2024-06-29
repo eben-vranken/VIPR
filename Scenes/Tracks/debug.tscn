@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://m2lx32lfwyvw"]
+[gd_scene load_steps=9 format=3 uid="uid://m2lx32lfwyvw"]
 
 [ext_resource type="PackedScene" uid="uid://eolxnjs2tckx" path="res://Objects/Player/player.tscn" id="1_04lw3"]
 [ext_resource type="Texture2D" uid="uid://csgv0dckyxw6y" path="res://Visuals/Sprites/Track/road-texture.jpg" id="2_cymrb"]
@@ -24,6 +24,9 @@ uv1_scale = Vector3(1, 50, 1)
 material = SubResource("StandardMaterial3D_y8to4")
 size = Vector2(30, 1000)
 
+[sub_resource type="PlaneMesh" id="PlaneMesh_q5oe5"]
+size = Vector2(1000, 1000)
+
 [node name="Track" type="Node3D"]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -39,3 +42,8 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, -477)
 use_collision = true
 mesh = SubResource("PlaneMesh_mqtni")
+
+[node name="Ground" type="CSGMesh3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.55, -477)
+use_collision = true
+mesh = SubResource("PlaneMesh_q5oe5")
