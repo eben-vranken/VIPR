@@ -6,19 +6,21 @@ extends CharacterBody3D
 
 # Car properties
 @export var acceleration: float = 17.5
-@export var reverse_acceleration: float = 30.0
-@export var max_speed: float = 220.0 # Kmph
+@export var reverse_acceleration: float = 20.0
+@export var max_speed: float = 150.0 # Kmph
 @export var reverse_max_speed: float = 25.0 # Kmph
 @export var friction: float = 0.25
 @export var gravity: float = -9.86
-@export var brake_speed: float = 15.0
+@export var brake_speed: float = 15.5
 @export var mass: float = 20.0
-@export var turn_amount: float = 200.0
-@export var turn_speed: float = 0.35
 @export var turn_stop_limit: float = 50.0 # Speed needed to turn
+@export var turn_amount: float = 750.0
+@export var min_turn_amount: float = 150.0 # Minimum turn amount at maximum speed
+@export var turn_speed: float = 0.3
+@export var min_turn_speed: float = 0.15
 
 # Tilt
-@export var tilt_amount: float = 0.15
+@export var tilt_amount: float = 0.2
 @export var tilt_speed: float = 5.0
 
 # Inputs
@@ -31,7 +33,7 @@ var brake_input_force: float = 0.0
 ###############
 
 @onready var car_collision: CollisionShape3D = $CarCollision
-@onready var car_mesh: MeshInstance3D = $CarMesh
+@onready var car_mesh: Node3D = $CarMesh
 @onready var ground_check_raycast: RayCast3D = $GroundCheck
 @onready var player_camera: Camera3D = $CarMesh/Camera3D
 
@@ -64,7 +66,7 @@ func player_movement(delta):
 	# Get the forward direction of the car
 	var forward = -global_transform.basis.z
 
-	# Forward or backward movement
+	# Forward
 	if thrust:
 		var desired_speed = thrust * acceleration * delta
 		velocity += forward * desired_speed
@@ -83,22 +85,24 @@ func player_movement(delta):
 	else:
 		velocity -= velocity.normalized() * brake_force
 
-	# Reverse
-	print(velocity.z)
-	if brake_input_force > 0.0 and velocity.z >= 0.0:
-		var desired_speed = brake_input_force * reverse_acceleration * delta
-		velocity -= forward * desired_speed
-		reverse = true
-	else:
-		reverse = false
 
 	# Steering
-	var turn_amount_rad = turn_input * deg_to_rad(turn_amount)
-	speed = velocity.length()
-	var turn_delta = turn_amount_rad * min(1.0, speed / turn_stop_limit) * delta
+	speed = abs(Vector3(velocity.x, 0.0, velocity.z).length())
+	var speed_ratio = clamp(speed / max_speed, 0, 1)
+	var dynamic_turn_amount = lerp(turn_amount, min_turn_amount, speed_ratio)
+	var dynamic_turn_speed = lerp(turn_speed, min_turn_speed, speed_ratio)
+	var turn_amount_rad = turn_input * deg_to_rad(dynamic_turn_amount)
+
+	var turn_delta
+
+	# Apply the turn_stop_limit to restrict turning at low speeds
+	if speed >= turn_stop_limit:
+		turn_delta = turn_amount_rad * delta
+	else:
+		turn_delta = turn_amount_rad * (speed / turn_stop_limit) * delta
 
 	# Rotate the car
-	rotate_y(-turn_delta * turn_speed)
+	rotate_y(-turn_delta * dynamic_turn_speed)
 
 	# Align velocity with the new forward direction
 	var forward_velocity = forward * velocity.dot(forward)
@@ -110,14 +114,9 @@ func player_movement(delta):
 	var tilt = -turn_input * tilt_amount * clamp(speed, 0, 1.0)
 	car_mesh.rotation.z = lerp(car_mesh.rotation.z, tilt, tilt_speed * delta)
 
-
 	# Cap velocity to max speed
-	if not reverse:
-		if velocity.length() > max_speed:
-			velocity = velocity.normalized() * max_speed
-	else:
-		if velocity.length() > reverse_max_speed:
-			velocity = velocity.normalized() * reverse_max_speed
+	if velocity.length() > max_speed:
+		velocity = velocity.normalized() * max_speed
 
 	move_and_slide()
 
@@ -134,3 +133,4 @@ func player_haptic():
 func update_ui():
 	### Dashboard
 	ui_car_speed.text = str(int(speed), " km/h")
+	print("Current Speed:", speed)
