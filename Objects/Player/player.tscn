@@ -1,11 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://eolxnjs2tckx"]
+[gd_scene load_steps=6 format=3 uid="uid://eolxnjs2tckx"]
 
 [ext_resource type="Script" path="res://Scripts/Player/player_movement.gd" id="1_vh1fj"]
+[ext_resource type="FontFile" uid="uid://bgtjjw4tnfy8f" path="res://Visuals/Fonts/Minecraft.ttf" id="2_tbeqj"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wf707"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_yt4ie"]
 size = Vector3(1, 1, 2)
+
+[sub_resource type="LabelSettings" id="LabelSettings_j05ck"]
+font = ExtResource("2_tbeqj")
+font_size = 32
+outline_size = 16
+outline_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
 
 [node name="Player" type="CharacterBody3D"]
 script = ExtResource("1_vh1fj")
@@ -15,10 +22,32 @@ transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 
 shape = SubResource("SphereShape3D_wf707")
 
 [node name="CarMesh" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 mesh = SubResource("BoxMesh_yt4ie")
 
 [node name="Camera3D" type="Camera3D" parent="CarMesh"]
 transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 3.9, 9.2)
 
 [node name="GroundCheck" type="RayCast3D" parent="."]
+
+[node name="PlayerUI" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="PlayerUI"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 25
+theme_override_constants/margin_top = 25
+theme_override_constants/margin_right = 25
+theme_override_constants/margin_bottom = 25
+
+[node name="Dashboard" type="Control" parent="PlayerUI/MarginContainer"]
+layout_mode = 2
+
+[node name="CarSpeed" type="Label" parent="PlayerUI/MarginContainer/Dashboard"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+text = "0 km/h"
+label_settings = SubResource("LabelSettings_j05ck")
