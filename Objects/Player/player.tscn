@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://eolxnjs2tckx"]
 
 [ext_resource type="Script" path="res://Scripts/Player/player_movement.gd" id="1_vh1fj"]
-[ext_resource type="FontFile" uid="uid://bgtjjw4tnfy8f" path="res://Visuals/Fonts/Minecraft.ttf" id="2_tbeqj"]
+[ext_resource type="FontFile" path="res://Visuals/Fonts/Minecraft.ttf" id="2_tbeqj"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_wf707"]
 

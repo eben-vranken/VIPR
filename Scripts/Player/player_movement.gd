@@ -84,10 +84,13 @@ func player_movement(delta):
 		velocity -= velocity.normalized() * brake_force
 
 	# Reverse
-	if brake_input_force > 0.0:
+	print(velocity.z)
+	if brake_input_force > 0.0 and velocity.z >= 0.0:
 		var desired_speed = brake_input_force * reverse_acceleration * delta
 		velocity -= forward * desired_speed
 		reverse = true
+	else:
+		reverse = false
 
 	# Steering
 	var turn_amount_rad = turn_input * deg_to_rad(turn_amount)
@@ -115,6 +118,7 @@ func player_movement(delta):
 	else:
 		if velocity.length() > reverse_max_speed:
 			velocity = velocity.normalized() * reverse_max_speed
+
 	move_and_slide()
 
 func update_camera():
